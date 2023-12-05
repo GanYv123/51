@@ -1,0 +1,10 @@
+{
+    "files.associations": {
+        "*.OBJ": "bat",
+        "reg52.h": "c",
+        "delay.h": "c",
+        "ds1302.h": "c",
+        "alarm.h": "c",
+        "onewire.h": "c"
+    }
+}

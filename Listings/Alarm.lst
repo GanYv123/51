@@ -1,0 +1,86 @@
+C51 COMPILER V9.60.7.0   ALARM                                                             12/04/2023 15:10:31 PAGE 1   
+
+
+C51 COMPILER V9.60.7.0, COMPILATION OF MODULE ALARM
+OBJECT MODULE PLACED IN .\Objects\Alarm.obj
+COMPILER INVOKED BY: D:\Keil_v5\C51\BIN\C51.EXE Alarm.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\Ala
+                    -rm.lst) OBJECT(.\Objects\Alarm.obj)
+
+line level    source
+
+   1          #include <REG52.H>
+   2          #include "ds1302.h"
+   3          #include "LCD1602.h"
+   4          #include "Delay.h"
+   5          #include <INTRINS.H>
+   6          
+   7          //蜂鸣器端口：
+   8          sbit Buzzer=P1^5;
+   9          
+  10          /**
+  11            * @brief  蜂鸣器私有延时函数，延时500us
+  12            * @param  无
+  13            * @retval 无
+  14            */
+  15          void Buzzer_Delay500us()                //@12.000MHz
+  16          {
+  17   1              unsigned char i;
+  18   1      
+  19   1              _nop_();
+  20   1              i = 247;
+  21   1              while (--i);
+  22   1      }
+  23          
+  24          /**
+  25            * @brief  蜂鸣器发声
+  26            * @param  ms 发声的时长，范围：0~32767
+  27            * @retval 无
+  28            */
+  29          void Buzzer_Time(unsigned int ms)
+  30          {
+  31   1              unsigned int i;
+  32   1              for(i=0;i<ms*2;i++)
+  33   1              {
+  34   2                      Buzzer=!Buzzer;
+  35   2                      Buzzer_Delay500us();
+  36   2              }
+  37   1      }
+  38          
+  39          
+  40          void initAlarm(char val1,char val2){
+  41   1          DS1302_Time_Alarm.hour = val1;
+  42   1          DS1302_Time_Alarm.minute = val2;
+  43   1      }
+  44          
+  45          void showAlarm(){
+  46   1          LCD_ShowNum(2, 12, DS1302_Time_Alarm.hour, 2);//显示时
+  47   1          LCD_ShowString(2, 14,":");//显示   :
+  48   1          LCD_ShowNum(2, 15, DS1302_Time_Alarm.minute, 2);//显示分
+  49   1      }
+  50          
+  51          void clearAlarmLCD(){
+  52   1          LCD_ShowString(2, 12,"      ");//显示   :
+  53   1          
+  54   1      }
+C51 COMPILER V9.60.7.0   ALARM                                                             12/04/2023 15:10:31 PAGE 2   
+
+  55          
+  56          bit reachAlarm() //判断时钟是不是到达指定的点 
+  57          {
+  58   1          return (DS1302_Time.hour == DS1302_Time_Alarm.hour && DS1302_Time.minute == DS1302_Time_Alarm.minute) 
+             -? 1 : 0;
+  59   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    119    ----
+   CONSTANT SIZE    =      9    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

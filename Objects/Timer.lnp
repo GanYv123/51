@@ -1,0 +1,14 @@
+".\Objects\STARTUP.obj",
+".\Objects\main.obj",
+".\Objects\LCD1602.obj",
+".\Objects\ds1302.obj",
+".\Objects\Delay.obj",
+".\Objects\Key.obj",
+".\Objects\Timer0.obj",
+".\Objects\Alarm.obj",
+".\Objects\Temperature.obj",
+".\Objects\DS18B20.obj",
+".\Objects\OneWire.obj" 
+TO ".\Objects\Timer" 
+PRINT(".\Listings\Timer.m51") RAMSIZE(256) 
+DISABLEWARNING (16) 

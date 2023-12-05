@@ -1,0 +1,136 @@
+C51 COMPILER V9.60.7.0   TEMPERATURE                                                       12/04/2023 15:30:25 PAGE 1   
+
+
+C51 COMPILER V9.60.7.0, COMPILATION OF MODULE TEMPERATURE
+OBJECT MODULE PLACED IN .\Objects\Temperature.obj
+COMPILER INVOKED BY: D:\Keil_v5\C51\BIN\C51.EXE Temperature.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listin
+                    -gs\Temperature.lst) OBJECT(.\Objects\Temperature.obj)
+
+line level    source
+
+   1          #include <REG52.H>
+   2          #include "LCD1602.h"
+   3          #include "Delay.h"
+   4          #include "Temperature.h"
+   5          #include "DS18B20.h"
+   6          #include "Key.h"
+   7          #include <stdlib.h>
+   8          
+   9          //温度显示模块 LCD 1 12
+  10          float T;
+  11          float tt,tempT;
+  12          
+  13          unsigned char temperature_VAL_TOP = 30; //温度上限值
+  14          unsigned char temperature_VAL_LOW = 25; //温度下限值
+  15          
+  16          void show_temperature(){
+  17   1          DS18B20_ConvertT(); //转换温度
+  18   1              LCD_ShowString(1,12,"T E");
+  19   1              tt = T;
+  20   1              T=DS18B20_ReadT();      //读取温度
+  21   1              tempT = abs(tt - T);
+  22   1              if(tempT< 2){
+  23   2                      if(T<0)                         //如果温度小于0
+  24   2                      {
+  25   3                              LCD_ShowChar(2,11,'-'); //显示负号
+  26   3                              T=-T;                   //将温度变为正数
+  27   3                      }
+  28   2                      else                            //如果温度大于等于0
+  29   2                      {
+  30   3                              LCD_ShowChar(2,11,'+'); //显示正号
+  31   3                      }
+  32   2                      LCD_ShowNum(2,12,T,2);          //显示温度整数部分
+  33   2                      LCD_ShowChar(2,14,'.');         //显示小数点
+  34   2                      LCD_ShowNum(2,15,(unsigned long)(T*100)%100,2);//显示温度小数部分
+  35   2              }
+  36   1      }
+  37          
+  38          void init_temperature(){
+  39   1      
+  40   1          DS18B20_ConvertT();         //上电先转换一次温度，防止第一次读数据错误
+  41   1              delay_ms(500);                  //等待转换完成
+  42   1      }
+  43          
+  44          void clear_temperature(){
+  45   1          LCD_ShowString(1,10,"      ");
+  46   1          LCD_ShowString(2,10,"      ");
+  47   1      }
+  48          
+  49          void temperature_VAL_ADD(){
+  50   1              temperature_VAL_TOP++;
+  51   1      }
+  52          
+  53          void temperature_VAL_SUB(){
+  54   1              temperature_VAL_TOP--;
+C51 COMPILER V9.60.7.0   TEMPERATURE                                                       12/04/2023 15:30:25 PAGE 2   
+
+  55   1      }
+  56          
+  57          void temperature_VAL_LOW_ADD(){
+  58   1              temperature_VAL_LOW++;
+  59   1      }
+  60          
+  61          void temperature_VAL_LOW_SUB(){
+  62   1              temperature_VAL_LOW--;
+  63   1      }
+  64          
+  65          
+  66          bit TEM_exceed(){
+  67   1              //温度是否超过上或者下xian
+  68   1              tempT = abs(tt - T);
+  69   1              if(tempT < 2 && (unsigned char)T != 0){
+  70   2                      if((unsigned char) T >= temperature_VAL_TOP || (unsigned char) T < temperature_VAL_LOW){
+  71   3                              return 1;
+  72   3                      }
+  73   2                      else{
+  74   3                              return 0;
+  75   3                      }
+  76   2              }
+  77   1                      //return (unsigned char) T >= temperature_VAL_TOP ? 1 : 0; 
+  78   1              else
+  79   1                      return 0;
+  80   1      }
+  81          
+  82          void show_EXCEED_VAL(){
+  83   1              LCD_ShowString(1,11,"limit ");
+  84   1              LCD_ShowNum(2,11,temperature_VAL_LOW,2);
+  85   1              LCD_ShowNum(2,14,temperature_VAL_TOP,2);
+  86   1      }
+  87          
+  88          void clearLCD_EXCEED_VAL(){
+  89   1              LCD_ShowString(1,11,"      ");
+  90   1              LCD_ShowString(2,11,"      ");
+  91   1      }
+  92          
+  93          void show_set_temperature(){
+  94   1              LCD_ShowNum(1, 12, get_temperature_VAL_TOP(), 2);
+  95   1              LCD_ShowString(1, 14, "  ToC");
+  96   1              LCD_ShowNum(2, 12, get_temperature_VAL_LOW(), 2);
+  97   1              LCD_ShowString(2, 14, "ToC");
+  98   1      }
+  99          
+ 100          unsigned char get_temperature_VAL_TOP()
+ 101          {
+ 102   1              return temperature_VAL_TOP;
+ 103   1      }
+ 104          
+ 105          unsigned char get_temperature_VAL_LOW()
+ 106          {
+ 107   1              return temperature_VAL_LOW;
+ 108   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    508    ----
+   CONSTANT SIZE    =     28    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =     14    ----
+C51 COMPILER V9.60.7.0   TEMPERATURE                                                       12/04/2023 15:30:25 PAGE 3   
+
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
